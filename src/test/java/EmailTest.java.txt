@@ -1,0 +1,118 @@
+package org.apache.commons.mail;
+
+import static org.junit.Assert.assertEquals;
+
+import java.sql.Date;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class EmailTest {
+
+	private static final String[] TEST_EMAILS = {"d@b.com", "dalia@c.org", "abcdefghijklmnopqrst@abcdefghijklmnopqrst.com.bd"};
+	private String[] NamesTest = {"dalia", "aleen", "reem"};
+	private String[] chars = {" ", "b", "C", "\5bcccy", "0101112131415", "01234567890123456789","\n" };
+	
+	private EmailConcrete email;
+	
+	@Before
+	public void setUpEmailTest() throws Exception {
+		
+		email = new EmailConcrete();
+	}
+	
+	@After
+	public void tearDownEmailTest() throws Exception {
+		
+	}
+
+	@Test
+	public void addBCCTest() throws Exception {
+		email.addBcc(TEST_EMAILS[1], "Dalia");
+		assertEquals(1, email.getBccAddresses().size());
+	}
+
+	@Test
+	public void testAddCc() throws Exception {
+		email.addCc(TEST_EMAILS[0]);
+		assertEquals(1, email.getCcAddresses().size());
+	}
+
+	@Test
+	public void headerTest() throws Exception {
+		
+		email.addHeader(NamesTest[0] , chars[3]);
+		
+		assertEquals(1, email.getHeaders().size());
+	}
+
+	@Test
+	public void addReplyTo() throws Exception {
+		
+		email.addReplyTo("Aleen@bc.com");
+		
+		assertEquals(1, email.getReplyToAddresses().size());
+	}
+
+	@Test
+	public void hostTest() {
+		
+		email.setHostName("localhost");
+		String hostname = email.getHostName("Dalia@bcc.com");
+		
+		assertEquals("Local Host", hostname);
+	}
+
+	@Test
+	public void buildMimeMessage() throws EmailException {
+		
+		email.setHostName("local host");
+		email.setSmtpPort(12251999);
+		email.setFrom("dalia@g.com");
+		email.addTo("abc@cd.com");
+		email.setSubject("EMAIL TEST");
+     	email.setContent("testing content", "text/plain");
+     	email.addReplyTo("waddup@gui.com");
+     	
+		email.buildMimeMessage();
+	}
+
+	@Test
+	public void sessionForMail() throws EmailException {
+		
+		email.setHostName("HostTest");
+		email.setAuthentication("username", "Protected pass");
+		email.setBounceAddress("bounce@cp.com");
+		
+		email.getMailSession();
+	}
+
+	@Test
+	public void sentDate() {
+		
+		email.setSentDate(new Date(4));
+		
+		assertEquals(new Date(4), email.sentDate());
+	}
+
+	@Test 
+	public void sentDateTestTwo() {
+		email.sentDate();
+	}
+
+	@Test
+	public void testGetSocketConnectionTimeOut() {
+		
+		int time = 99;
+		email.setSocketConnectionTimeout(time);
+		
+		assertEquals(time, email.getSocketConnectionTimeout());
+	}
+
+	@Test
+		public void fromSet() throws Exception {
+			
+			email.setFrom("daliafun123@gui.com");
+			
+		}
